@@ -112,6 +112,21 @@ class AuthService {
     await _supabase.auth.resetPasswordForEmail(email);
   }
 
+  // ─── Update User Metadata ─────────────────────────────────────────────────
+  Future<void> updateUserMetadata({String? fullName, String? avatarUrl}) async {
+    try {
+      final updates = <String, dynamic>{};
+      if (fullName != null) updates['full_name'] = fullName;
+      if (avatarUrl != null) updates['avatar_url'] = avatarUrl;
+
+      await _supabase.auth.updateUser(
+        UserAttributes(data: updates),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   // ─── Auth State Stream ────────────────────────────────────────────────────
   Stream<AuthState> get authStateChanges => _supabase.auth.onAuthStateChange;
 }

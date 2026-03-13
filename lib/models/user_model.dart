@@ -41,4 +41,18 @@ class UserModel {
     }
     return email[0].toUpperCase();
   }
+
+  UserModel copyWith({
+    String? id,
+    String? email,
+    String? fullName,
+    String? avatarUrl,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      email: email ?? this.email,
+      fullName: fullName ?? this.fullName,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+    );
+  }
 }

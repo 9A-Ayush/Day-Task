@@ -142,4 +142,38 @@ class AuthProvider extends ChangeNotifier {
   Future<void> resetPassword(String email) async {
     await _authService.resetPassword(email);
   }
+
+  Future<void> updateAvatar(String avatarUrl) async {
+    try {
+      await _authService.updateUserMetadata(avatarUrl: avatarUrl);
+      
+      // Update local user model
+      if (_currentUser != null) {
+        _currentUser = _currentUser!.copyWith(avatarUrl: avatarUrl);
+        notifyListeners();
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> updateProfile({String? fullName, String? avatarUrl}) async {
+    try {
+      await _authService.updateUserMetadata(
+        fullName: fullName,
+        avatarUrl: avatarUrl,
+      );
+      
+      // Update local user model
+      if (_currentUser != null) {
+        _currentUser = _currentUser!.copyWith(
+          fullName: fullName ?? _currentUser!.fullName,
+          avatarUrl: avatarUrl ?? _currentUser!.avatarUrl,
+        );
+        notifyListeners();
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

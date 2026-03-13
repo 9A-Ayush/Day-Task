@@ -25,7 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     final user = context.read<AuthProvider>().currentUser;
-    _selectedAvatar = user?.avatarUrl ?? _availableAvatars[0];
+    _selectedAvatar = user?.avatarUrl;
   }
 
   Future<void> _showAvatarPicker() async {
@@ -76,10 +76,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
 
     if (selected != null) {
-      setState(() {
-        _selectedAvatar = selected;
-      });
-      // TODO: Save to user profile in Supabase
+      try {
+        // Save to Supabase
+        await context.read<AuthProvider>().updateAvatar(selected);
+        
+        setState(() {
+          _selectedAvatar = selected;
+        });
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Avatar updated successfully'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error updating avatar: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -141,10 +163,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: CircleAvatar(
                         radius: 65,
                         backgroundColor: const Color(0xFF546E7A),
-                        backgroundImage: _selectedAvatar != null
-                            ? AssetImage(_selectedAvatar!)
+                        backgroundImage: (user?.avatarUrl != null && user!.avatarUrl!.isNotEmpty)
+                            ? AssetImage(user.avatarUrl!)
                             : null,
-                        child: _selectedAvatar == null
+                        child: (user?.avatarUrl == null || user!.avatarUrl!.isEmpty)
                             ? Text(
                                 user?.initials ?? 'U',
                                 style: const TextStyle(

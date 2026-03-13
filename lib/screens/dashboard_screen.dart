@@ -82,18 +82,23 @@ class DashboardScreen extends StatelessWidget {
                           ),
                           GestureDetector(
                             onTap: () => _navigateToProfile(context),
-                            child: CircleAvatar(
-                              radius: 28,
-                              backgroundColor: AppTheme.yellowAccent,
-                              child: Text(
-                                user?.initials ?? 'U',
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                            child: user?.avatarUrl != null && user!.avatarUrl!.isNotEmpty
+                                ? CircleAvatar(
+                                    radius: 28,
+                                    backgroundImage: AssetImage(user.avatarUrl!),
+                                  )
+                                : CircleAvatar(
+                                    radius: 28,
+                                    backgroundColor: AppTheme.yellowAccent,
+                                    child: Text(
+                                      user?.initials ?? 'U',
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
                           ),
                         ],
                       ),
